@@ -57,5 +57,14 @@ public class SubjectDTO{
 		}
 		return true;
 	}
+	
+	public double getMediaNotes() {
+		double media = 0;
+		for(double d: this.notes) {
+			media += d;
+		}
+		media = media/this.notes.length;
+		return media;
+	}
 
 }

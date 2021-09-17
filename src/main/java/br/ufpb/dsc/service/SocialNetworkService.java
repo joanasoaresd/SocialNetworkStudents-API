@@ -1,5 +1,7 @@
 package br.ufpb.dsc.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,10 +62,11 @@ public class SocialNetworkService {
 		this.repository.deleteById(id);
 	}
 	
-	//Falta ordenar lista por nota
-	public List<Subject> listOrderedNotes(){
-		List<Subject> listTemp = listAllSubjects();		
-		return null;
+	public List<SubjectDTO> listOrderedNotes(){
+		List<SubjectDTO> listTemp = new ArrayList<>();	
+		repository.findAll().forEach(subj -> listTemp.add(SubjectMapper.MAPPER.toDTO(subj)));
+		listTemp.sort(Comparator.comparing(SubjectDTO::getMediaNotes));		
+		return listTemp;
 	}
 	
 }

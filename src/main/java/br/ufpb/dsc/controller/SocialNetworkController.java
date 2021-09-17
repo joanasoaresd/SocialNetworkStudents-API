@@ -1,7 +1,6 @@
 package br.ufpb.dsc.controller;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +42,6 @@ public class SocialNetworkController {
 		}					
 	}
 	
-	//<METODO HTTP> /v1/api/disciplinas (id numerico, nome, nota)
-	//Retorna um JSON com todas as disciplinas já inseridas no sistema e o <código de resposta HTTP> 
 	@GetMapping("/v1/api/disciplinas")
 	public ResponseEntity<Collection<Subject>> getSubjects(){
 		try {
@@ -54,9 +51,6 @@ public class SocialNetworkController {
 		}
 	}
 	
-	//<METODO HTTP> /v1/api/disciplinas/{id}
-	//Retorna um JSON que representa a discipline cujo identificador único é id e o 
-	//<código de resposta HTTP> Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
 	@GetMapping("/v1/api/disciplinas/{id}")
 	public ResponseEntity<Optional<Subject>> getSubjectById(@PathVariable("id") int id){
 		try {
@@ -66,10 +60,6 @@ public class SocialNetworkController {
 		}
 	}
 	
-	//Atualiza o nome da disciplina de identificador id no sistema. No corpo da requisição HTTP 
-	//deve estar um JSON com o novo nome da disciplina a ser atualizado no sistema.
-	//Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e o <código de resposta HTTP> 
-	// Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
 	@PutMapping("/v1/api/disciplinas/{id}/nome")
 	public ResponseEntity<Subject> setSubjectName(@PathVariable("id") int id, @RequestBody TextNode name){
 		try {
@@ -79,11 +69,6 @@ public class SocialNetworkController {
 		}
 	}
 	
-	//Atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um 
-	//JSON com a nova nota da disciplina a ser atualizada no sistema.
-	//Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e o <código de resposta HTTP> 
-	// Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
-
 	@PatchMapping("/v1/api/disciplinas/{id}/nota")
 	public ResponseEntity<Subject> setSubjectNotes(@PathVariable("id") int id, @RequestBody double[] notes){
 		try {
@@ -92,10 +77,7 @@ public class SocialNetworkController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	//Remove a disciplina de identificador id do sistema e retorna a disciplina que foi removida (um JSON) e o 
-	//<código de resposta HTTP> (ver https://developer.mozilla.org/en-US/docs/Web/HTTP/Status). 
-	//Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
+		
 	@DeleteMapping("/v1/api/disciplinas/{id}")
 	public ResponseEntity<Subject> removeSubject(@PathVariable("id") int id){
 		try {
@@ -106,12 +88,9 @@ public class SocialNetworkController {
 		}		
 	}
 	
-	//Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) 
-	//e o <código de resposta HTTP> (ver https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
 	@GetMapping(" /v1/api/disciplinas/ranking")
 	public ResponseEntity<?> getAllSubjectsByNotes(){		
-		return new ResponseEntity<>(this.snService.listAllSubjects(), HttpStatus.OK);
-		//INCOMPLETO
+		return new ResponseEntity<>(this.snService.listOrderedNotes(), HttpStatus.OK);
 	}
 
 }
