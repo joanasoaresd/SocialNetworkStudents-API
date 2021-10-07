@@ -10,15 +10,15 @@ import lombok.Data;
 
 @Data
 public class SubjectDTO{
-	//id:long, nome:String, nota:double, comentarios:List<Comentario> e likes:int.
+	
 	private int id;
-	//@NotNull
+	
 	private String name;
-	//@NotNull
+	
 	private int likes;
-	//@NotNull
+	
 	private double notes;
-	//@NotNull
+	
 	private List<Comments> comments;
 	
 	public SubjectDTO() {

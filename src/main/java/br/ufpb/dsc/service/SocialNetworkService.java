@@ -46,7 +46,7 @@ public class SocialNetworkService {
 		return this.repository.save(temp);
 	}
 	
-	public Subject setSubjectNotes(int id, double[] notes) throws SubjectInvalidException {
+	public Subject setSubjectNotes(int id, double notes) throws SubjectInvalidException {
 		Subject temp = this.repository.getById(id);
 		if(!repository.existsById(temp.getId())) {
 			throw new SubjectInvalidException("Id da disciplina não encontrado", "O Id desta disciplina não existe no sistema");
@@ -66,6 +66,13 @@ public class SocialNetworkService {
 		List<SubjectDTO> listTemp = new ArrayList<>();	
 		repository.findAll().forEach(subj -> listTemp.add(SubjectMapper.MAPPER.toDTO(subj)));
 		listTemp.sort(Comparator.comparing(subject -> subject.getNotes()*(-1)));		
+		return listTemp;
+	}
+
+	public List<SubjectDTO> listOrderedLikes(){
+		List<SubjectDTO> listTemp = new ArrayList<>();	
+		repository.findAll().forEach(subj -> listTemp.add(SubjectMapper.MAPPER.toDTO(subj)));
+		listTemp.sort(Comparator.comparing(subject -> subject.getLikes()*(-1)));		
 		return listTemp;
 	}
 	
