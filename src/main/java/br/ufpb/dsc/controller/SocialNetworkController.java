@@ -33,7 +33,7 @@ public class SocialNetworkController {
 		this.snService = socialNetworkService;
 	}
 	
-	@PostMapping("/v1/api/disciplinas")
+	@PostMapping("/disciplinas")
 	public ResponseEntity<Subject> addSubject(@RequestBody SubjectDTO s){
 		try {
 			return new ResponseEntity<Subject>(this.snService.save(s), HttpStatus.CREATED);
@@ -42,7 +42,7 @@ public class SocialNetworkController {
 		}					
 	}
 	
-	@GetMapping("/v1/api/disciplinas")
+	@GetMapping("/disciplinas")
 	public ResponseEntity<Collection<Subject>> getSubjects(){
 		try {
 			return new ResponseEntity<>(this.snService.listAllSubjects(), HttpStatus.OK);
@@ -51,7 +51,7 @@ public class SocialNetworkController {
 		}
 	}
 	
-	@GetMapping("/v1/api/disciplinas/{id}")
+	@GetMapping("/disciplinas/{id}")
 	public ResponseEntity<Optional<Subject>> getSubjectById(@PathVariable("id") int id){
 		try {
 			return new ResponseEntity<Optional<Subject>>(this.snService.getSubjectById(id), HttpStatus.OK);
@@ -60,7 +60,7 @@ public class SocialNetworkController {
 		}
 	}
 	
-	@PutMapping("/v1/api/disciplinas/{id}/nome")
+	@PutMapping("/disciplinas/{id}/nome")
 	public ResponseEntity<Subject> setSubjectName(@PathVariable("id") int id, @RequestBody TextNode name){
 		try {
 			return new ResponseEntity<Subject>(this.snService.setSubjectName(id, name.asText()), HttpStatus.OK);
@@ -69,8 +69,8 @@ public class SocialNetworkController {
 		}
 	}
 	
-	@PatchMapping("/v1/api/disciplinas/{id}/nota")
-	public ResponseEntity<Subject> setSubjectNotes(@PathVariable("id") int id, @RequestBody double[] notes){
+	@PatchMapping("/disciplinas/{id}/nota")
+	public ResponseEntity<Subject> setSubjectNotes(@PathVariable("id") int id, @RequestBody double notes){
 		try {
 			return new ResponseEntity<Subject>(this.snService.setSubjectNotes(id, notes), HttpStatus.OK);
 		} catch (SubjectInvalidException e) {
@@ -78,7 +78,7 @@ public class SocialNetworkController {
 		}
 	}
 		
-	@DeleteMapping("/v1/api/disciplinas/{id}")
+	@DeleteMapping("/disciplinas/{id}")
 	public ResponseEntity<Subject> removeSubject(@PathVariable("id") int id){
 		try {
 			this.snService.deleteSubject(id);	
@@ -88,9 +88,14 @@ public class SocialNetworkController {
 		}		
 	}
 	
-	@GetMapping(" /v1/api/disciplinas/ranking")
+	@GetMapping("/disciplinas/ranking/notas")
 	public ResponseEntity<?> getAllSubjectsByNotes(){		
 		return new ResponseEntity<>(this.snService.listOrderedNotes(), HttpStatus.OK);
+	}
+
+	@GetMapping("/disciplinas/ranking/likes")
+	public ResponseEntity<?> getAllSubjectsByLikes(){		
+		return new ResponseEntity<>(this.snService.listOrderedLikes(), HttpStatus.OK);
 	}
 
 }
