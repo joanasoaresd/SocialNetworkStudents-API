@@ -41,7 +41,7 @@ public class SocialNetworkService {
 	}
 	
 	public Subject setSubjectName(int id, String name) throws SubjectInvalidException {
-		Subject temp = this.repository.getById(id);
+		Subject temp = this.repository.findById(id).get();
 		temp.setName(name);
 		return this.repository.save(temp);
 	}
@@ -65,7 +65,7 @@ public class SocialNetworkService {
 	public List<SubjectDTO> listOrderedNotes(){
 		List<SubjectDTO> listTemp = new ArrayList<>();	
 		repository.findAll().forEach(subj -> listTemp.add(SubjectMapper.MAPPER.toDTO(subj)));
-		listTemp.sort(Comparator.comparing(SubjectDTO::getMediaNotes));		
+		listTemp.sort(Comparator.comparing(subject -> subject.getNotes()*(-1)));		
 		return listTemp;
 	}
 	
