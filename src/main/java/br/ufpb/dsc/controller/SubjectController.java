@@ -20,15 +20,15 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import br.ufpb.dsc.dto.SubjectDTO;
 import br.ufpb.dsc.entities.Subject;
 import br.ufpb.dsc.exceptions.SubjectInvalidException;
-import br.ufpb.dsc.service.SocialNetworkService;
+import br.ufpb.dsc.service.SubjectService;
 
 @RestController 
-public class SocialNetworkController {
+public class SubjectController {
 	
 	@Autowired
-	private SocialNetworkService snService;
+	private SubjectService snService;
 	
-	public SocialNetworkController(SocialNetworkService socialNetworkService) {
+	public SubjectController(SubjectService socialNetworkService) {
 		super();
 		this.snService = socialNetworkService;
 	}

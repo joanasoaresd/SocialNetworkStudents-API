@@ -15,7 +15,7 @@ import br.ufpb.dsc.mapper.SubjectMapper;
 import br.ufpb.dsc.repository.SubjectRepository;
 
 @Service
-public class SocialNetworkService {
+public class SubjectService {
 
 	@Autowired
 	private SubjectRepository repository;
