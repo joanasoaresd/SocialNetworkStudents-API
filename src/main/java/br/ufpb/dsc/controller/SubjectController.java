@@ -106,9 +106,15 @@ public class SubjectController {
     }
 
 	@PutMapping("/comment/{id}")
-    public ResponseEntity<SubjectDTO> addCommentToCourseById(@PathVariable Integer id,
+    public ResponseEntity<SubjectDTO> addCommentToSubjectById(@PathVariable Integer id,
             @RequestBody CommentsDTO dto, @RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(snService.addCommentToSubjectById(id, dto, token), HttpStatus.OK);
+    }
+
+	@PutMapping("/notes/{id}")
+    public ResponseEntity<SubjectDTO> addNotesToSubjectById(@PathVariable Integer id,
+            @RequestBody double nota, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(snService.addNotesToSubjectById(id, nota, token), HttpStatus.OK);
     }
 
 }
