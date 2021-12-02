@@ -115,6 +115,28 @@ public class SubjectService {
         return new SubjectDTO(s);
     }
 
+	public SubjectDTO addNotesToSubjectById(int id, double notes, String header) {
+
+		Optional<String> loggedEmail = jwtSecurity.getUser(header);
+        if (!loggedEmail.isPresent()) {
+            throw new UserNotLoggedException("Usuário não logado");
+        }
+
+        // Verificando crendenciais do usuário logado
+        Optional<User> user = userRepository.findByEmail(loggedEmail.get());
+        if (!user.isPresent()) {
+            throw new UserExistsException("Email do usuário logado não encontrado!");
+        }
+
+        if (!repository.existsById(id)) {
+            throw new SubjectExistsException("Disciplina não encontrada", "SubjectService.addCommentToSubjectById");
+        }
+        Subject s = repository.findById(id).get();
+		s.setNotes(notes);
+        repository.save(s);
+        return new SubjectDTO(s);
+    }
+
 	public SubjectDTO addLikesToSubjectById(int id, String header) {
 
 		Optional<String> loggedEmail = jwtSecurity.getUser(header);

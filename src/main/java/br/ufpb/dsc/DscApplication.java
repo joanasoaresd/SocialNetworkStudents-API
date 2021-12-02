@@ -14,7 +14,7 @@ public class DscApplication {
     public FilterRegistrationBean<TokenFilter> filterJwt() {
         FilterRegistrationBean<TokenFilter> filtroJwt = new FilterRegistrationBean<TokenFilter>();
         filtroJwt.setFilter(new TokenFilter());
-        filtroJwt.addUrlPatterns("/subject/likes/*", "/subject/{id}/*", "/auth/usuarios/*");
+        filtroJwt.addUrlPatterns("/subject/likes/*", "/subject/{id}/*", "/notes/{id}", "/auth/usuarios/*");
         return filtroJwt;
     }
 
