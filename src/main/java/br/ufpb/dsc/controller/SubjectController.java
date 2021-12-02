@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import br.ufpb.dsc.dto.CommentsDTO;
 import br.ufpb.dsc.dto.SubjectDTO;
 import br.ufpb.dsc.entities.Subject;
 import br.ufpb.dsc.exceptions.SubjectInvalidException;
@@ -97,5 +99,16 @@ public class SubjectController {
 	public ResponseEntity<?> getAllSubjectsByLikes(){		
 		return new ResponseEntity<>(this.snService.listOrderedLikes(), HttpStatus.OK);
 	}
+
+	@PutMapping("/likes/{id}")
+    public ResponseEntity<SubjectDTO> addLikes(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(snService.addLikesToSubjectById(id, token), HttpStatus.OK);
+    }
+
+	@PutMapping("/comment/{id}")
+    public ResponseEntity<SubjectDTO> addCommentToCourseById(@PathVariable Integer id,
+            @RequestBody CommentsDTO dto, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(snService.addCommentToSubjectById(id, dto, token), HttpStatus.OK);
+    }
 
 }

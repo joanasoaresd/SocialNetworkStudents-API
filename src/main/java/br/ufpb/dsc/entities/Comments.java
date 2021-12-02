@@ -1,5 +1,6 @@
 package br.ufpb.dsc.entities;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -20,11 +21,13 @@ public class Comments {
     @GeneratedValue(strategy = GenerationType.AUTO)    
 	private int id;
 
-	private Date date;
+	private LocalDateTime date;
 
 	private String msg;
 
-	private int isRemove;
+	private int isRemove = 0;
+
+	private String userEmail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
@@ -32,12 +35,11 @@ public class Comments {
 
 	public Comments() {}	
 
-	public Comments(int id, Date date, String msg) {
+	public Comments(Subject s, String uEmail, String msg) {
 		super();
-		this.id = id;
-		this.date = date;
+		this.subject = s;
+		this.userEmail = uEmail;
 		this.msg = msg;
-		this.isRemove = 0;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import br.ufpb.dsc.entities.Comments;
+import br.ufpb.dsc.entities.Subject;
 import br.ufpb.dsc.exceptions.SubjectInvalidException;
 import lombok.Data;
 
@@ -21,9 +22,13 @@ public class SubjectDTO{
 	
 	private List<Comments> comments;
 	
-	public SubjectDTO() {
+	public SubjectDTO(Subject s) {
 		super();
-		// TODO Auto-generated constructor stub
+		this.id = s.getId();
+		this.name = s.getName();
+		this.likes = s.getLikes();
+		this.notes = s.getNotes();
+		this.comments = s.getComments();
 	}
 
 	

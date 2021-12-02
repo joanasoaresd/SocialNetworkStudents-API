@@ -8,17 +8,30 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.ufpb.dsc.dto.CommentsDTO;
 import br.ufpb.dsc.dto.SubjectDTO;
+import br.ufpb.dsc.entities.Comments;
 import br.ufpb.dsc.entities.Subject;
+import br.ufpb.dsc.entities.User;
+import br.ufpb.dsc.exceptions.SubjectExistsException;
 import br.ufpb.dsc.exceptions.SubjectInvalidException;
+import br.ufpb.dsc.exceptions.UserExistsException;
+import br.ufpb.dsc.exceptions.UserNotLoggedException;
 import br.ufpb.dsc.mapper.SubjectMapper;
 import br.ufpb.dsc.repository.SubjectRepository;
+import br.ufpb.dsc.repository.UserRepository;
 
 @Service
 public class SubjectService {
 
 	@Autowired
 	private SubjectRepository repository;
+
+	@Autowired
+    private UserRepository userRepository;
+
+	@Autowired
+    private JWTService jwtSecurity;
 	
 	public Subject save(SubjectDTO s) throws SubjectInvalidException {
 		s.checkSubject();
@@ -75,5 +88,54 @@ public class SubjectService {
 		listTemp.sort(Comparator.comparing(subject -> subject.getLikes()*(-1)));		
 		return listTemp;
 	}
+
+	public SubjectDTO addCommentToSubjectById(int id, CommentsDTO dto, String header) {
+
+		Optional<String> loggedEmail = jwtSecurity.getUser(header);
+        if (!loggedEmail.isPresent()) {
+            throw new UserNotLoggedException("Usuário não logado");
+        }
+
+        // Verificando crendenciais do usuário logado
+        Optional<User> user = userRepository.findByEmail(loggedEmail.get());
+        if (!user.isPresent()) {
+            throw new UserExistsException("Email do usuário logado não encontrado!");
+        }
+
+        if (!repository.existsById(id)) {
+            throw new SubjectExistsException("Disciplina não encontrada", "SubjectService.addCommentToSubjectById");
+        }
+        Subject s = repository.findById(id).get();
+        Comments comment = new Comments();
+        comment.setMsg(dto.getMsg());
+        comment.setSubject(s);
+        comment.setUserEmail(dto.getUserEmail());
+        s.getComments().add(comment);
+        repository.save(s);
+        return new SubjectDTO(s);
+    }
+
+	public SubjectDTO addLikesToSubjectById(int id, String header) {
+
+		Optional<String> loggedEmail = jwtSecurity.getUser(header);
+        if (!loggedEmail.isPresent()) {
+            throw new UserNotLoggedException("Usuário não logado");
+        }
+
+        // Verificando crendenciais do usuário logado
+        Optional<User> user = userRepository.findByEmail(loggedEmail.get());
+        if (!user.isPresent()) {
+            throw new UserExistsException("Email do usuário logado não encontrado!");
+        }
+
+        if (!repository.existsById(id)) {
+            throw new SubjectExistsException("Disciplina não encontrada", "addLikesToSubjectById");
+        }
+
+        Subject s = repository.findById(id).get();
+        s.setLikes(s.getLikes() + 1);
+        repository.save(s);
+        return new SubjectDTO(s);
+    }
 	
 }

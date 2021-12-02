@@ -1,24 +1,30 @@
 package br.ufpb.dsc.dto;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import br.ufpb.dsc.entities.Comments;
 import lombok.Data;
 
 @Data
 public class CommentsDTO {
-    private int idUser;
-	private Date date;
+	private int id;
+    private String userEmail;
+	private LocalDateTime date;
 	private String msg;
-	private int isRemove;
 
-    public CommentsDTO() {}	
+    public CommentsDTO(Comments c) {
+		this.id = c.getId();
+		this.userEmail = c.getUserEmail();
+		this.date = c.getDate();
+		this.msg = c.getMsg();
+	}	
 
-	public CommentsDTO(int idUser, Date date, String msg) {
+	public CommentsDTO(String msg, String email) {
 		super();
-		this.idUser = idUser;
-		this.date = date;
+		this.date = LocalDateTime.now();
 		this.msg = msg;
-		this.isRemove = 0;
+		this.userEmail = email;
 	}
 
     
