@@ -1,5 +1,6 @@
 package br.ufpb.dsc.dto;
 
+import br.ufpb.dsc.entities.User;
 import br.ufpb.dsc.exceptions.UserInvalidException;
 import lombok.Data;
 
@@ -10,7 +11,11 @@ public class UserDTO {
     private String name; 
 	private String email; 
 
-    public UserDTO(){}
+    public UserDTO(User u){
+		this.id = u.getId();
+		this.name = u.getName();
+		this.email = u.getEmail();
+	}
 
     public boolean checkUser() {
 		if(this.name == null || this.name.isBlank() || this.name.isEmpty()) {

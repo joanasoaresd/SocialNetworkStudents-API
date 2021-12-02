@@ -4,52 +4,47 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import br.ufpb.dsc.dto.LoginResponseDTO;
 import br.ufpb.dsc.dto.UserLoginDTO;
-import br.ufpb.dsc.entities.User;
-import br.ufpb.dsc.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 
+@Service
 public class JWTService {
 
-    @Autowired
-	private UserRepository usersDAO;
+  @Autowired
+  private UserService userService;
+  public static final String TOKEN_KEY = "cvuejeoemaioocnultpqxq";
 
-	public LoginResponse autentica(UserLoginDTO user) {
-		String msgErro = "Email e/ou senha invalido(s). Login nao realizado";
-		Optional<User> optUser = usersDAO.findByEmail(user.getEmail());
-		if (optUser.isPresent() && user.getPassword().equals(optUser.get().getPassword()))
-			return new LoginResponse(geraToken(user));
+  public LoginResponseDTO authenticate(UserLoginDTO user) {
+    if (!userService.validateUser(user)) {
+      return new LoginResponseDTO("Email e/ou senha inválidos. Login não realizado.");
+    }
+    String token = generateToken(user.getEmail());
+    return new LoginResponseDTO(token);
+  }
 
-		return new LoginResponse(msgErro);
+  private String generateToken(String email) {
+    return Jwts.builder().setHeaderParam("typ", "JWT").setSubject(email).signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
+        .setExpiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000)).compact();
+  }
 
-	}
+  public Optional<String> getUser(String header) {
+    if (header == null || !header.startsWith("Bearer ")) {
+      throw new SecurityException();
+    }
 
-	private String geraToken(UserLoginDTO user) {
-		String token = Jwts.builder().setSubject(user.getEmail()).signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
-				.setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
-		return token;
-	}
+    String token = header.substring(br.ufpb.dsc.filters.TokenFilter.TOKEN_INDEX);
 
-	public static final String TOKEN_KEY = "ja pode sair?";
-
-	public Optional<String> recuperaUsuario(String cabecalhoAutorizacao) {
-		if (cabecalhoAutorizacao == null || 
-			!cabecalhoAutorizacao.startsWith("Bearer ")) {
-			throw new SecurityException();
-		}
-
-		// Extraindo apenas o token do cabecalho.
-		String token = cabecalhoAutorizacao.substring(br.ufpb.dsc.filters.TokenFilter.TOKEN_INDEX);
-
-		String subject = null;
-		try {
-			subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
-		} catch (SignatureException e) {
-			throw new SecurityException("Token invalido ou expirado!");
-		}
-		return Optional.of(subject);
-	}
+    String subject = null;
+    try {
+      subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
+    } catch (SignatureException e) {
+      throw new SecurityException("Token inválido ou expirado!");
+    }
+    return Optional.of(subject);
+  }
 }

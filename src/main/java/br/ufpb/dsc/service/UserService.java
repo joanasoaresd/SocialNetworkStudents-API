@@ -2,10 +2,13 @@ package br.ufpb.dsc.service;
 
 import java.util.Optional;
 
+import javax.servlet.ServletException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.ufpb.dsc.dto.UserDTO;
+import br.ufpb.dsc.dto.UserLoginDTO;
 import br.ufpb.dsc.entities.User;
 import br.ufpb.dsc.exceptions.UserExistsException;
 import br.ufpb.dsc.exceptions.UserInvalidException;
@@ -34,14 +37,36 @@ public class UserService {
 
 	public UserDTO deletaUsuario(String cabecalhoDeAutorizacao) {
 		//vai ler o token e recuperar o subject
-		Optional<String> userId = jwtService.recuperaUsuario(cabecalhoDeAutorizacao);
+		Optional<String> userId = jwtService.getUser(cabecalhoDeAutorizacao);
 
 		//vai pegar o subject do token e ver se existe um usuário correspondente
 		User user = validateUser(userId);
 
 		//vai remover o usuario associado ao token
 		repository.delete(user);
-		return new UserDTO();
+		return new UserDTO(user);
+	}
+
+	public User removeUsuario(String email, String authHeader) throws UserInvalidException {
+		User user = getUser(email);
+		if (userPermissions(authHeader, email)) {
+			repository.delete(user);
+			return user;
+		}
+		throw new UserInvalidException("Usuário não tem permissão");
+	}
+
+	public User getUser(String email) {
+		Optional<User> optUsuario = repository.findByEmail(email);
+		if(optUsuario.isEmpty())
+			throw new IllegalArgumentException();
+		return optUsuario.get();
+	}
+
+	private boolean userPermissions(String authorizationHeader, String email) throws UserInvalidException {
+		Optional<String> subject = jwtService.getUser(authorizationHeader);
+		Optional<User> optUsuario = repository.findByEmail(subject.get());
+		return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email);
 	}
 
 	private User validateUser(Optional<String> id) {
@@ -55,4 +80,17 @@ public class UserService {
 		return usuario.get();
 
 	}
+
+	public boolean validateUser(UserLoginDTO user) {
+        Optional<User> optUser = repository.findByEmail(user.getEmail());
+        return (optUser.isPresent() && optUser.get().getPassword().equals(user.getPassword()));
+    }
+
+
+	public UserDTO criandoUser(User user) {
+        if (repository.findByEmail(user.getEmail()).isPresent())
+            throw new UserExistsException("Já Existe usuário com este email");
+        repository.save(user);
+        return new UserDTO(user);
+    }
 }
